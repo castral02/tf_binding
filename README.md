@@ -15,10 +15,10 @@ This repository contains code for the paper: _________________________________
 The primary goal of this repository is to give the tools and understanding for users to use our model or even train their own with new datasets. 
 
 In this repository, there are...
-1. [Trained Model]()
-2. [Tools to Train a New Model]()
-3. [How to create a predicitions]()
-4. [Examples/Data]()
+1. [Trained Model](trained_model)
+2. [Tools to Train a New Model](toolkit_to_train)
+3. [How to create a predicitions](trained_model)
+4. [Examples/Data](examples)
 
 
 
