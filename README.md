@@ -57,7 +57,7 @@ To run the software, the preferred operating systems are macOS and Linux systems
 
    - [Python 3.0 or higher](https://www.python.org/)
    - [Absl-py 2.2.2](https://pypi.org/project/absl-py/)
-   - [Matplotlib 3.10.0]](https://matplotlib.org/)
+   - [Matplotlib 3.10.0](https://matplotlib.org/)
    - [Joblib 1.4.2](https://joblib.readthedocs.io/en/stable/)
    - [Openpxyl 3.1.5](https://openpyxl.readthedocs.io/en/stable/tutorial.html)
    - [Numpy 2.2.4](https://numpy.org/)
