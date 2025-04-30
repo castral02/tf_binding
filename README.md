@@ -9,6 +9,7 @@ To address this challenge, we developed a deep learning model capable of priorit
 
 Our approach integrates recently developed high-throughput EP300-TF binding [data](https://www.biorxiv.org/content/10.1101/2024.08.19.608698v1) in combination with AlphaFold2-based structure prediction to develop a novel scoring system called HAT_score that significantly enhances the prediction of EP300-TF relative to traditional structure prediction metrics. We anticipate this model will be useful to prioritize the discovery of uncharacterized regulatory interactions, providing a link between high-throughput transcriptional activation assays and EP300 that will be potentially extensible to additional druggable transcriptional co-activator families.
 
+---
 ## The model
 This repository contains code for the paper: _________________________________
 
@@ -19,7 +20,6 @@ In this repository, there are...
 2. [Tools to Train a New Model](toolkit_to_train)
 3. [How to create a predicitions](trained_model)
 4. [Examples/Data](examples)
-
 
 
 ## AlphaPulldown Workflow
