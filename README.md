@@ -1,5 +1,5 @@
 # TF_binding
-A deep learning model for predicting EP300-Transcription Factor interactions using integrated structural data and binding assays. Th
+A deep learning model for predicting EP300-Transcription Factor interactions using integrated structural data and binding assays. 
 
 ## Abstract
 
