@@ -50,7 +50,21 @@ run_get_good_pae.sh --output_dir pulldown_model --cutoff=50
 To view example `sbatch` files, [click here]().
 
 ## Requirements
+To run the software, the preferred operating systems are macOS and Linux systems. A conda environment is needed to run the software to hold necessary packages. 
 
+1. How to install [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+2. Necessary packages to install
+
+   - [Python 3.0 or higher](https://www.python.org/)
+   - [Absl-py 2.2.2](https://pypi.org/project/absl-py/)
+   - [Matplotlib 3.10.0]](https://matplotlib.org/)
+   - [Joblib 1.4.2](https://joblib.readthedocs.io/en/stable/)
+   - [Openpxyl 3.1.5](https://openpyxl.readthedocs.io/en/stable/tutorial.html)
+   - [Numpy 2.2.4](https://numpy.org/)
+   - [Pandas 2.2.3](https://pandas.pydata.org/)
+   - [PyTorch 2.5.1](https://pytorch.org/)
+   - [SciPy 1.15.2](https://scipy.org/)
+   - [Seaborn 0.13.2](https://seaborn.pydata.org/)
 
 ---
 
