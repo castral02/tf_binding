@@ -51,6 +51,8 @@ To view example `sbatch` files, [click here]().
 
 ---
 
+## Requirements
+
 ## Declaration of Generative AI Usage
 
 This project utilized OpenAI's ChatGPT to assist in generating Python code, documentation, and explanatory content.
