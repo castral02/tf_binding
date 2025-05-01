@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 import os 
 import torch
-from model import CrossAttention, ResidualBlock, EnhancedFeatureProcessor, TFBindingDataset, TFBindingTransformer, predict_scores
+from TF_binder_model import CrossAttention, ResidualBlock, EnhancedFeatureProcessor, TFBindingDataset, TFBindingTransformer, predict_scores
 
 aa_to_index = {aa: i + 1 for i, aa in enumerate("ACDEFGHIKLMNPQRSTVWY")}  # 1-based index, 0 for padding
 #--------------------- Definitions ---------------------#
