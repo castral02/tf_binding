@@ -1,5 +1,5 @@
 # Training your own model
-In this repository, we give you your own model, and an example on how to train your own model. 
+In this repository, we give you the [architecutre of our model](TF_binder_model.py), and an example on how to [train](train_model.py) your own model. 
 
 If you want an explanation of how we trained our own model, please [click here](../trained_model)
 
