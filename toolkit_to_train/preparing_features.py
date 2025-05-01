@@ -6,7 +6,8 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from TF_binder_model import TFBindingTransformer, train_model, TFBindingDataset
+from TF_binder_model import TFBindingTransformer, TFBindingDataset
+from  train_model import train_model
 from evaluate_model import evaluate_model, plot_loss_curve
 import json
 
