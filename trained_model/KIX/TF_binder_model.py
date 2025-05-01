@@ -300,3 +300,45 @@ class TFBindingTransformer(nn.Module):
         output = torch.sigmoid(logit_base + bias)
 
         return output
+
+def predict_scores(model, new_data, batch_size=32):
+    """
+    Predict Kd scores for new data using the trained model.
+    
+    :param model: The trained model
+    :param new_data: A dictionary containing the new data features.
+                     Must include keys: 'seq_features', 'domain_seq_features', 'struct_features', 
+                     'alphafold_features'
+    :param batch_size: Batch size for prediction
+    :return: Predicted Kd scores
+    """
+    
+    # Prepare the new data as tensors
+    seq_features = torch.tensor(np.array(new_data['seq_features']), dtype=torch.float32)
+    domain_seq_features = torch.tensor(np.array(new_data['domain_seq_features']), dtype=torch.float32)
+    struct_features = torch.tensor(np.array(new_data['struct_features']), dtype=torch.float32)
+    alphafold_features = torch.tensor(np.array(new_data['alphafold_features']), dtype=torch.float32)
+    
+    # Create placeholder kd_values (not used for prediction)
+    dummy_kd = torch.zeros(len(seq_features), dtype=torch.float32)
+    
+    # Create a DataLoader for the new data
+    dataset = TFBindingDataset(
+        seq_features, 
+        domain_seq_features,
+        struct_features, 
+        alphafold_features, 
+        dummy_kd
+    )
+    
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    
+    model.eval()  # Set the model to evaluation mode
+    
+    predictions = []
+    with torch.no_grad():  # Disable gradient calculation
+        for seq_input, struct_input, alphafold_input, _, domain_seq_input in dataloader:
+            output = model(seq_input, struct_input, alphafold_input, domain_seq_input).squeeze()
+            predictions.extend(output.tolist())
+    
+    return np.array(predictions)
