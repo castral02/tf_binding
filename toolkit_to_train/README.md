@@ -1,5 +1,7 @@
 # Training your own model
-In this repository, we give you the tools to run and create your own model. 
+In this repository, we give you your own model, and an example on how to train your own model. 
+
+If you want an explanation of how we trained our own model, please [click here](../trained_model)
 
 ## Model Architecture Overview
 
@@ -79,7 +81,7 @@ class CrossAttention(nn.Module):
         return attn_output.squeeze(1)
 ```
 
-**Transformation Encoding**
+*Transformation Encoding*
 
 A shared transformer encoder is used for both transcription factor and domain sequences, allowing the model to learn the contextual representations of these sequences. To further this learning, we added a residual connection to retain the original sequence information to stabalize learning. 
 
@@ -109,7 +111,7 @@ Transformer Encoder with more capacity and layers
     domain_seq_out = domain_seq_transformer_out + domain_seq_features  # Residual connection
 ```
 
-**Feature Fusion**
+*Feature Fusion*
 
 Before the final layers, all the processed features are fused toether into a single representation. This fusion enables the model to integrate multiple modalities-- such as sequence, structure, and AlphaFold-metrics-- into a unified view for downstream prediction. 
 
@@ -132,7 +134,7 @@ A fusion gate dynamically learn the importance of each modality essentially ampl
     combined = self.combined_norm(combined)
 ```
 
-**Output Layer**
+*Output Layer*
 
 The final layers consist of a fully connected layer followed by a GELU activation and a dropout for regulization. 
 
