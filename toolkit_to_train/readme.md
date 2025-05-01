@@ -7,7 +7,7 @@ The inputs of AlphaFold Metrics, transcription factor sequence, domain sequence,
 
 Feautres are first passed through a fully connected linear that projects them from an input dimension to an output dimension. After this, features are normalized using a ```LayerNorm```. These normalized features are then passed through a GELU (Gaussian Error Linear Unit) activation, which softly weights input values. The activated features are processed by a layer of residual bloacks for the model to learn deeper transformations and preserving the original information. 
 
-```
+```python 
 class EnhancedFeatureProcessor(nn.Module):
     """"Processes the input features."""
     def __init__(self, input_dim, output_dim, num_layers=2, dropout=0.1):
