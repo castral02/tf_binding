@@ -40,9 +40,9 @@ As stated in the main page [README](../README.md), we ran our AlphaPulldown's on
 
 The necessary files are needed in the folder to run AlphaPulldown. To look at an example of a folder, [click here](../examples/alphapulldown_files)
 
-To create sbatch files in a high throughput manner, we created this code for [colabfold search](../tf_binding/scripts/colab.py) and for [AlphaPulldown](../tf_binding/scripts/pulldown.py). 
+To create sbatch files in a high throughput manner, we created this code for [colabfold search](../scripts/colab.py) and for [AlphaPulldown](../scripts/pulldown.py). 
 
-To run these, we created this code: [running_colab.py](../tf_binding/scripts/running_colab.py) and [running_pulldowns.py](../tf_binding/scripts/running_pulldowns.py).
+To run these, we created this code: [running_colab.py](../scripts/running_colab.py) and [running_pulldowns.py](../scripts/running_pulldowns.py).
 
 Sbatch files will look like this...
 
