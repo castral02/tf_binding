@@ -38,7 +38,7 @@ git clone https://github.com/castral02/tf_binding.git
 
 As stated in the main page [README](../README.md), we ran our AlphaPulldown's on the NIH HPC Biowulf Cluster. 
 
-The necessary files are needed in the folder to run AlphaPulldown. To look at an example of a folder, [click here](examples/alphapulldown_files)
+The necessary files are needed in the folder to run AlphaPulldown. To look at an example of a folder, [click here](../examples/alphapulldown_files)
 
 To create sbatch files in a high throughput manner, we created this code for [colabfold search](../tf_binding/scripts/colab.py) and for [AlphaPulldown](../tf_binding/scripts/pulldown.py). 
 
