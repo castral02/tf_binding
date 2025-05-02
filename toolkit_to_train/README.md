@@ -235,6 +235,7 @@ The training code is highlighted [here](train_model.py). When training our model
 
 
 **Custom Loss Function**
+
 We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. Within the target y-values, the code divides them into empirical percentiles and identify the top-25% slice. The Top-25% slice is weighed out more heavily by a factor of alpha while a smaller weight of gamma is applied to remaining predictions outside the percintile. These weights are applied to a MSE loss, which is averaged over the entire dataset. The loss function combines the Top-25% loss and overall loss using a balance factor. 
 
 ```python
