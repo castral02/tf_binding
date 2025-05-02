@@ -7,6 +7,7 @@ In this README, we will be going throuhg an example of our [general-pupose model
 <img src="overall_prediction/information/loss_curve.png" width="300"> <img src="overall_prediction/information/accuracy_curve.png" width="300"> <img src="overall_prediction/information/r_square_predicted_actual.png" width="300">
 
 **Performance Metrics**:
+
 - Training Progress: Converged over 100 epochs with final loss of ~3.6; no signs of overfitting
 - Validation Performance:
   - R^2 for validating: 0.82
@@ -16,6 +17,7 @@ In this README, we will be going throuhg an example of our [general-pupose model
    - R^2 for testing: 0.77
 
 ## How to run and create a prediction
+
 In this README, I will be using the overall_prediction model as an example on how to run and create a prediction. 
 
 The steps: 
@@ -24,6 +26,7 @@ The steps:
 3. creating prediction
 
 *Setting up Environment*
+
 Create a conda environment with the necessary packages stated in the main page [README](../README.md)
 
 To download this repository:
@@ -44,6 +47,7 @@ To run these, we created this code: [running_colab.py](../tf_binding/scripts/run
 Sbatch files will look like this...
 
 For ColabFold Search:
+
 ```bash
 #!/bin/bash
 #SBATCH --job-name=KIX_colab       # Give your job a name
@@ -72,6 +76,7 @@ create_individual_features.py --fasta_paths=$INPUT_DIR/bait.fasta,$INPUT_DIR/can
 ```
 
 For AlphaPulldown:
+
 ```bash
 #!/bin/bash
 #SBATCH --job-name=KIX_alphapulldown      # Name the job for CREBBP Full
@@ -113,6 +118,7 @@ rm -rf /data/CBLCCBR/crebbp_ep300/crebbp/KIX/pulldown_cf_msas
 *Preparing Features*
 
 Some features from the AlphaPulldown pipeline is not attached to the output csv file ([example of AlphaPulldown Output](../examples)). To prepare this, you will need to run two codes:
+
 1. [Extracting PAE score](../scripts/lia_lis.py)
 
 ```bash
