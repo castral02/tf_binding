@@ -70,6 +70,8 @@ def encode_sequence(sequence, aa_to_index, max_length=50):
 
 To see an example of features processed and an example of dataset to train model, [click here](.../trained_model/overall_prediction/information/processed_data.csv)
 
+For individual domain models, we took out the indices of domains due to the model being domain specific to look an example of the model for domain specific [click here](../trained_model/KIX/TF_binder_model.py)
+
 *Target Output*
 
 The target output is considered to be a Transformed Kd value between 0-1. We performed a min-max normalization on experimental Kd values (2).
@@ -233,20 +235,122 @@ The training code is highlighted [here](train_model.py). When training our model
 
 
 **Custom Loss Function**
-We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. 
+We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. Within the target y-values, the code divides them into empirical percentiles and identify the top-25% slice. The Top-25% slice is weighed out more heavily by a factor of alpha while a smaller weight of gamma is applied to remaining predictions outside the percintile. These weights are applied to a MSE loss, which is averaged over the entire dataset. The loss function combines the Top-25% loss and overall loss using a balance factor. 
 
-The weight function ```\( w_i \)``` is defined as:
+```python
+class BalancedTopWeightedMSE(torch.nn.Module):
+    def __init__(self, tau, alpha, gamma, balance=0.7):
+        """
+        tau     : start of the top slice (0‑1). 0.75 → top‑25 %.
+        alpha   : extra weight for the very top sample (alpha+1 is max).
+        gamma   : base weight for the rest
+        balance : balance between top domain accuracy and overall domain accuracy
+        """
+        super(BalancedTopWeightedMSE, self).__init__()
+        self.tau = tau
+        self.alpha = alpha
+        self.gamma = gamma
+        self.balance = balance
 
+    def forward(self, pred, target):
+        mse = F.mse_loss(pred, target, reduction='none')
+        
+        # Get the top 'tau' percentage of predictions
+        sorted_indices = torch.argsort(pred, descending=True)
+        top_k = int(len(pred) * self.tau)
+        
+        # Assign higher weight to the top-k predictions
+        weights = torch.zeros_like(target)
+        weights[sorted_indices[:top_k]] = self.alpha  # Set top-k to alpha weight
+        weights[sorted_indices[top_k:]] = self.gamma  # Set the rest to gamma weight
+        
+        # Compute the weighted mse
+        weighted_mse = mse * weights
+        
+        # Top loss: mean of the top-k weighted losses
+        top_loss = weighted_mse[weights == self.alpha].mean()
+        
+        # Overall loss: mean of all weighted losses
+        overall_loss = weighted_mse.mean()
+
+        # Return the combined loss with balance between top and overall
+        return self.balance * top_loss + (1 - self.balance) * overall_loss
 ```
-\[
-w_i = 
-\begin{cases}
-1 + \alpha (p_i - \tau_1 - \tau)^\gamma & \text{if } p_i \geq \tau_1 \\
-1 + \alpha (1 - \tau p_i - \tau)^\gamma & \text{otherwise}
-\end{cases}
-\]
 
+**Training Strategy**
+
+The dataset went through a stratified splitting which preserves the distribution of the quartile of the Kd values for each domain. Furthermore, the dataset was split into 80% training, 10% testing, and 10% validating. 
+
+This allows the model to generalize well across different domains and quartiles while avoiding bias. 
+
+```python
+    # Split the dataset into training, validation, and testing sets
+    quartile = pd.qcut(y, q=4, labels=False)          
+    domain = X['domain_indices']                     
+    strat_label = domain.astype(str) + '_' + quartile.astype(str)
+
+    X_train, X_temp, y_train, y_temp, strat_train, strat_temp = train_test_split(
+        X, y, strat_label,
+        test_size=0.20,           
+        random_state=42,
+        stratify=strat_label      
+    ) #splitting the dataset to be train and test/validate -> making sure the same amount of upper quartile and domains are the same
+
+    X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp,
+    test_size=0.50,          
+    random_state=42) # Split temp into validation and test, **stratifying on domain‑quartile labels**
+    # so both sets keep the same distribution and we’re not extrapolating.
 ```
+
+An L2 penalty for regularization was used to avoid overfitting. 
+
+```python
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)
+```
+
+Furthermore a learning rate scheduler was attached to reduce learning rate if Top-25% accuracy plateaus. 
+
+```python
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='max',  # Now we're maximizing top 25% accuracy 
+        factor=0.7,
+        patience=patience, #threshold if it does not learn something new
+        threshold=0.01, #this is the improvement in learning 
+        verbose=True #providing feedback
+    ) #learning rate scheduler that reduces the learning rate when monitored to optimize the 
+    #top 25%
+```
+
+To impove the model's robustness and generalization, we introduced articial noise during training; 
+
+- Gaussian Noise: Added noise with a standard deviation of 0.2 to interface features and AlphaFold metrics to prevent the model from memorizing data points and focusing on broader patterns within the dataset.
+- Random Masking: a 20% masking probability is applied to domain and transcription factor sequences to force the model to learn with incomplete-information and enhances the ability to generalize.
+- Random Scaling: introduces slight variations in the domain and transcription factor input sequence to learn more about invariant features and making it less sensitive to input scale
+- Random Dropout: randomly zeros out 10% of sequence and domain inputs forcing the model to rely on different combinations of features and not a single feature for each training iteration
+
+```python
+        if self.training and torch.rand(1).item() < 0.8:  # Add noise during training with 80% probability
+            # Add Gaussian noise to structured inputs
+            struct_input = add_noise(struct_input, std=0.2)  # Increase noise standard deviation
+            alphafold_input = add_noise(alphafold_input, std=0.2) 
+            
+            # Randomly mask sequence inputs
+            seq_input = random_mask(seq_input, mask_prob=0.2)  # Increase masking probability
+            domain_seq_input = random_mask(domain_seq_input, mask_prob=0.2)
+            
+            # Add random scaling noise
+            scaling_factor = torch.randn_like(seq_input) * 0.1 + 1.0  # Scale inputs by a random factor
+            seq_input = seq_input * scaling_factor
+            domain_seq_input = domain_seq_input * scaling_factor
+            
+            # Add random dropout noise
+            dropout_mask = torch.rand_like(seq_input) > 0.9  # 10% dropout
+            seq_input = seq_input * (~dropout_mask)
+            domain_seq_input = domain_seq_input * (~dropout_mask)
+```
+
 ## References
 [1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4).
 
