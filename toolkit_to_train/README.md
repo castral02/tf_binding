@@ -70,6 +70,17 @@ def encode_sequence(sequence, aa_to_index, max_length=50):
 
 To see an example of features processed and an example of dataset to train model, [click here](.../trained_model/overall_prediction/information/processed_data.csv)
 
+*Target Output*
+
+The target output is considered to be a Transformed Kd value between 0-1. We performed a min-max normalization on experimental Kd values (2).
+
+Min-max normalization is defined as:
+$$
+x' = \frac{x - \min(x)}{\max(x) - \min(x)}
+$$
+
+
+
 ## Model Architecture Overview
 
 *Enhnaced Feature Processing*
@@ -209,7 +220,10 @@ The final layers consist of a fully connected layer followed by a GELU activatio
 A domain-specific bias is then added to capture the differences in binding behavior across the different domains. The output is passed through a sigmoid activation, ensuring the final score to be between 0-1. 
 
 ## References
-[1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4)
+[1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4).
+
 [2] DelRosso, Nicole, et al. “High-Throughput Affinity Measurements of Direct Interactions between Activation Domains and Co-Activators.” bioRxiv, Jan. 2024, p. 2024.08.19.608698,[Paper Link](https://doi.org/10.1101/2024.08.19.608698).
+
 [3] Már, Matti, et al. “Multifunctional Intrinsically Disordered Regions in Transcription Factors.” Chemistry – A European Journal, vol. 29, no. 21, Apr. 2023, p. e202203369, [Paper Link](https://doi.org/10.1002/chem.202203369).
+
 [4] Ravarani, Charles NJ, et al. “High‐throughput Discovery of Functional Disordered Regions: Investigation of Transactivation Domains.” Molecular Systems Biology, vol. 14, no. 5, 2018, p. e8190, [Paper Link](https://doi.org/10.15252/msb.20188190).
