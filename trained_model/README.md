@@ -1,7 +1,8 @@
-# Our trained models
+## Our trained models
 
-We created a total of five models which has different distribution of Transformed Kd value dependent on the domain or overall dataset. To explore how we trained and more about the architecture of the model, [click here](../toolkit_to_train).
-In this README, I will be going through the example of our main model-- [overall_prediction](overall_prediction). 
+We created five models, each trained on a different distribution of Transformed Kd Values depending on the domain or the overall datase. To learn how we trained and more about the architecture of the model, [click here](../toolkit_to_train).
+In this README, we will be going throuhg an example of our [general-pupose model](overall_prediction) that has been trained across al the domains to predict binding affinity. 
+
 
 <img src="overall_prediction/information/loss_curve.png" width="300"> <img src="overall_prediction/information/accuracy_curve.png" width="300"> <img src="overall_prediction/information/r_square_predicted_actual.png" width="300">
 
@@ -10,7 +11,7 @@ In this README, I will be going through the example of our main model-- [overall
 - Validation Performance:
   - R^2 for validating: 0.82
   - Overall Accuracy: ~70%
-  - TOp 25% accuracy: ~85%
+  - Top 25% accuracy: ~85%
 - Testing Performance:
    - R^2 for testing: 0.77
 
@@ -112,16 +113,16 @@ rm -rf /data/CBLCCBR/crebbp_ep300/crebbp/KIX/pulldown_cf_msas
 *Preparing Features*
 
 Some features from the AlphaPulldown pipeline is not attached to the output csv file ([example of AlphaPulldown Output](../examples)). To prepare this, you will need to run two codes:
-1. [Extracting PAE score](lia_lis.py)
+1. [Extracting PAE score](../scripts/lia_lis.py)
 
 ```bash
 python3 lia_lis.py -output_dir=/directory/to/AlphaPulldown/files
 ```
 
-2. [Grabbing domain categories and transcription factor and domain sequences](preparing_data.py)
+2. [Grabbing domain categories and transcription factor and domain sequences](../scripts/preparing_data.py)
 
 ```bash
-pyhton3 preparing_data.py -fasta=/path/to/fasta -csv=/path/to/csv/file -protein=EP300orCREBBP
+python3 preparing_data.py -fasta=/path/to/fasta -csv=/path/to/csv/file -protein=EP300orCREBBP
 ```
   a. fasta file: the fasta file of candidate proteins the user used to run AlphaPulldown
   b. csv: csv file after the PAE score has been extracted
