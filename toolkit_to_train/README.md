@@ -229,6 +229,22 @@ A domain-specific bias is then added to capture the differences in binding behav
 
 ## Training Model
 
+The training code is highlighted [here](train_model.py). When training our model, we wanted to make sure can identify the key transcription factors that bind strongly to the any EP300 domain (Top 25%) while mainitng overall predictive accuracy. 
+
+
+**Custom Loss Function**
+We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. 
+
+The weight function \( w_i \) is defined as:
+
+\[
+w_i = 
+\begin{cases}
+1 + \alpha (p_i - \tau_1 - \tau)^\gamma & \text{if } p_i \geq \tau_1 \\
+1 + \alpha (1 - \tau p_i - \tau)^\gamma & \text{otherwise}
+\end{cases}
+\]
+
 
 ## References
 [1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4).
