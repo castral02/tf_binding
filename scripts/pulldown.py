@@ -27,7 +27,7 @@ for folder_name in os.listdir(PARENT_DIR):
 #SBATCH --output=output/{folder_name}.log    # Unique output log for each job
 #SBATCH --error=error/{folder_name}.log      # Unique error log for each job
 #SBATCH --mail-type=END,FAIL                   # Email on job completion or failure
-#SBATCH --mail-user=alex.castroverde@nih.gov   # Replace with your email
+#SBATCH --mail-user=   # Replace with your email
 
 set -e
 set -x  # Enable debugging
