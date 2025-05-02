@@ -235,8 +235,9 @@ The training code is highlighted [here](train_model.py). When training our model
 **Custom Loss Function**
 We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. 
 
-The weight function \( w_i \) is defined as:
+The weight function ```\( w_i \)``` is defined as:
 
+```
 \[
 w_i = 
 \begin{cases}
@@ -245,7 +246,7 @@ w_i =
 \end{cases}
 \]
 
-
+```
 ## References
 [1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4).
 
