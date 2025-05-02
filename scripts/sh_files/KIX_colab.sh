@@ -8,13 +8,13 @@
 #SBATCH --output=output/KIX_colab.log    # Unique output log for each job
 #SBATCH --error=error/KIX_colab.log      # Unique error log for each job
 #SBATCH --mail-type=END,FAIL   # Send email on job completion (END) or failure (FAIL)
-#SBATCH --mail-user=alex.castroverde@nih.gov  # Replace with your email address
+#SBATCH --mail-user=  # Replace with your email address
 
 set -e
 set -x  # Enable debugging
 
 # Load necessary modules
-module load colabfold alphapulldown
+module load colabfold alphapulldown/0.30/7
 
 # Specify your input and output directories
 INPUT_DIR="/data/CBLCCBR/crebbp_ep300/crebbp/KIX"   # Set input directory dynamically
