@@ -1,7 +1,17 @@
 # Training your own model
 In this repository, we give you the [architecutre of our model](TF_binder_model.py), and an example on how to [train](train_model.py) your own model. 
 
-If you want an explanation of how we trained our own model, please [click here](../trained_model)
+## Preparing Features
+
+To look at how we prepared our features, [click here](preparing_features.py).
+
+*Inputted Features*
+
+Several features were choosen due to their contribution of variance in PCA.
+
+![PCA AlphaFold](../examples/images/pca_alphafold_metrics.png)
+![PCA Interface](../examples/images/pca_interface.png)
+
 
 ## Model Architecture Overview
 
