@@ -82,6 +82,13 @@ For each domain:
 - TAZ1: max_kd = 53489.15 nM; min_kd = 13385.2 nM
 - TAZ2: max_kd = 46358.97 nM; min_kd = 1836.22 nM
 
+```python
+# Normalize Kd values
+    df["Transformed Kd (nM)"] = 1 - (df['Kd (nM)'] - df['Kd (nM)'].min()) / (df['Kd (nM)'].max() - df['Kd (nM)'].min())
+    print(df['Kd (nM)'].max())
+    print(df['Kd (nM)'].min())
+```
+
 ## Model Architecture Overview
 
 *Enhnaced Feature Processing*
@@ -219,6 +226,9 @@ A fusion gate dynamically learn the importance of each modality essentially ampl
 The final layers consist of a fully connected layer followed by a GELU activation and a dropout for regulization. 
 
 A domain-specific bias is then added to capture the differences in binding behavior across the different domains. The output is passed through a sigmoid activation, ensuring the final score to be between 0-1. 
+
+## Training Model
+
 
 ## References
 [1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4).
