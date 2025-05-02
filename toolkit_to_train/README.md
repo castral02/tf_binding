@@ -13,7 +13,7 @@ For AlphaFold Metrics, the first two principal components (PC1 and PC2) account 
 
 For Interface Features, the first two principal components (PC1 and PC2) account for ~61.7% of the total variance. PC1 explains 42.7% of that total. Using both the PCA and previous research, we used specific biochemical and interface properities to model the binding (2-4).
 
-<img src="../examples/images/pca_alphafold_metrics.png" width="300"> <img src="../examples/images/pca_interface.png" width="300">
+<img src="../examples/images/pca_alphafold_metrics.png" width="400"> <img src="../examples/images/pca_interface.png" width="400">
 
 **AlphaFold Features:**
 1. [ipTM](https://www.ebi.ac.uk/training/online/courses/alphafold/inputs-and-outputs/evaluating-alphafolds-predicted-structures-using-confidence-scores/confidence-scores-in-alphafold-multimer/)
