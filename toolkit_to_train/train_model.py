@@ -6,6 +6,27 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import pandas as pd
 
+class TFBindingDataset(Dataset):
+    def __init__(self, seq_features, domain_seq_features, struct_features, alphafold_features, targets):
+        self.seq_features = torch.tensor(seq_features, dtype=torch.float32)
+        self.domain_seq_features = torch.tensor(domain_seq_features, dtype=torch.float32)
+        self.struct_features = torch.tensor(struct_features, dtype=torch.float32)
+        self.alphafold_features = torch.tensor(alphafold_features, dtype=torch.float32)
+        self.targets = torch.tensor(targets, dtype=torch.float32)
+
+    def __len__(self):
+        return len(self.targets)
+
+    def __getitem__(self, idx):
+        return (
+            self.seq_features[idx],
+            self.struct_features[idx],
+            self.alphafold_features[idx],
+            self.targets[idx],
+            self.domain_seq_features[idx]
+        )
+
+
 class BalancedTopWeightedMSE(torch.nn.Module):
     def __init__(self, tau, alpha, gamma, balance=0.7):
         """
@@ -214,9 +235,6 @@ def train_model(X, y, epochs=100, patience=10):
         
         val_top25_accs.append(val_top25_acc)
         val_top50_accs.append(val_top50_acc)
-
-        # Average top-25% accuracy across all domains
-        val_top25_accs.append(val_top25_acc)
         
         # Print progress
         if (epoch + 1) % 10 == 0:
@@ -224,7 +242,7 @@ def train_model(X, y, epochs=100, patience=10):
                   f"Val Overall Acc: {val_overall_acc:.4f}, Val Top 25% Acc: {val_top25_acc:.4f}")
         
         # Early stopping
-        """if val_top25_acc < best_val_loss:
+        if val_top25_acc < best_val_loss:
             best_val_loss = val_top25_acc
             best_model = copy.deepcopy(model)
             epochs_without_improvement = 0
@@ -232,7 +250,7 @@ def train_model(X, y, epochs=100, patience=10):
             epochs_without_improvement += 1
             if epochs_without_improvement >= patience:
                 print(f"Early stopping at epoch {epoch+1}")
-                break"""
+                break
 
         scheduler.step(val_top25_acc)
     
