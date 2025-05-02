@@ -75,11 +75,8 @@ To see an example of features processed and an example of dataset to train model
 The target output is considered to be a Transformed Kd value between 0-1. We performed a min-max normalization on experimental Kd values (2).
 
 Min-max normalization is defined as:
-$$
-x' = \frac{x - \min(x)}{\max(x) - \min(x)}
-$$
 
-
+![Min-max normalization](https://latex.codecogs.com/png.image?\dpi{150}&space;x'%20=%20\frac{x%20-%20\min(x)}{\max(x)%20-%20\min(x)})
 
 ## Model Architecture Overview
 
