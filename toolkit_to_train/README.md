@@ -76,7 +76,7 @@ The target output is considered to be a Transformed Kd value between 0-1. We per
 
 Min-max normalization is defined as:
 
-![Min-max normalization](https://latex.codecogs.com/png.image?\dpi{150}&space;\bg_white\textcolor{black}\{x'%20=%20\frac{x%20-%20\min(x)}{\max(x)%20-%20\min(x)}})
+![Min-max normalization](https://latex.codecogs.com/png.image?\dpi{150}&bg=white&color=black&space;x'%20=%20\frac{x%20-%20\min(x)}{\max(x)%20-%20\min(x)})
 
 
 ## Model Architecture Overview
