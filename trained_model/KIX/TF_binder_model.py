@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
 import numpy as np
 import pandas as pd
-
 class TFBindingDataset(Dataset):
     """
     This is a Dataset for handling the data related to TFs and EP300 domain binding
@@ -16,12 +15,11 @@ class TFBindingDataset(Dataset):
     This is compatible with PyTorch DataLoader for efficient batching and shuffling to train and 
     evaluate the machine learning model.
     """
-    def __init__(self, seq_features, domain_seq_features, struct_features, alphafold_features, domain_indices, kd_values, difficulty=None):
+    def __init__(self, seq_features, domain_seq_features, struct_features, alphafold_features, kd_values):
         self.seq_features = torch.tensor(np.array(seq_features), dtype=torch.float32) #transcriptional factor sequence features
         self.domain_seq_features = torch.tensor(np.array(domain_seq_features), dtype=torch.float32) #domain sequence features
         self.struct_features = torch.tensor(np.array(struct_features), dtype=torch.float32) #interface structure features
         self.alphafold_features = torch.tensor(np.array(alphafold_features), dtype=torch.float32) #alphafold features
-        self.domain_indices = torch.tensor(np.array(domain_indices), dtype=torch.long) #mapping sequencing to their respecitve domain
         self.kd_values = torch.tensor(np.array(kd_values), dtype=torch.float32) #outcome -> transformed binding affinity
 
     def __len__(self):
@@ -31,40 +29,8 @@ class TFBindingDataset(Dataset):
         return (self.seq_features[idx], #retrieves the features and labels for the sample for the specific sample
                 self.struct_features[idx],
                 self.alphafold_features[idx], 
-                self.domain_indices[idx], 
                 self.kd_values[idx], 
                 self.domain_seq_features[idx]) 
-    
-
-class DomainSpecificModel(nn.Module):
-    """This is a shared trunk with a mini head that is unique for each domain
-    Creates a new layer for each domain that has domain-specific bias parameters.
-    
-    This is a shared encoder that learns features that are common to every domain"""
-    def __init__(self, input_size, num_domains):
-        super(DomainSpecificModel, self).__init__()
-        self.input_size = input_size
-        self.num_domains = num_domains
-        
-        # Common shared layers
-        self.fc1 = nn.Linear(input_size, 128)
-        self.relu = nn.ReLU()
-        
-        # Domain-specific head (domain bias branch)
-        self.domain_heads = nn.ModuleList([
-        nn.Sequential(
-            nn.Dropout(0.5),  # Increased dropout for domain components
-            nn.Linear(128, 1, bias=False)
-        ) for _ in range(num_domains)
-    ])
-    
-    def forward(self, x, domain):
-        x = self.relu(self.fc1(x))
-        
-        # Apply domain-specific head
-        domain_output = self.domain_heads[domain](x)  # Select the correct head for the current domain
-        
-        return domain_output
 
 
 class ResidualBlock(nn.Module):
@@ -117,32 +83,25 @@ class CrossAttention(nn.Module):
         return attn_output.squeeze(1)
 
 class EnhancedFeatureProcessor(nn.Module):
-    """"This process the input features"""
+    """"Processes the input features."""
     def __init__(self, input_dim, output_dim, num_layers=2, dropout=0.1):
         super(EnhancedFeatureProcessor, self).__init__()
-        self.input_layer = nn.Linear(input_dim, output_dim) #fully connected layer
-        self.norm = nn.LayerNorm(output_dim) #stabalizing training
+        self.input_layer = nn.Linear(input_dim, output_dim)  # Project input_dim -> output_dim
+        self.norm = nn.LayerNorm(output_dim) #helps with the stabilization and convergence of training
         self.residual_blocks = nn.ModuleList([
             ResidualBlock(output_dim, dropout) for _ in range(num_layers)
         ])
-        
+
     def forward(self, x):
-        input_x = x  # Save the input
-        x = self.input_layer(x)
+        x = self.input_layer(x)  # Always project at the beginning
         x = self.norm(x)
-        x = F.gelu(x) #experimental data highlights linearity if looking at all four domains; however, does not show within the same domain 
-        
-        for block in self.residual_blocks:
-            x = block(x) #perserves info from earlier layers
-        
-        # If dimensions match, add a skip connection from input to output
-        if input_x.shape[-1] != x.shape[-1]:
-            input_x = self.input_layer(input_x)
-        
-        x = x + input_x
-        
+        x = F.gelu(x) #helps with a smoother and more expressive activation
+
+        for block in self.residual_blocks: #deepends the network 
+            x = block(x)
+
         return x
-    
+
 def add_noise(x, std=0.1):
     """Applies Gaussian noise to a tensor"""
     return x + torch.randn_like(x) * std
@@ -167,12 +126,10 @@ def random_mask(x, mask_prob=0.1):
 
 
 class TFBindingTransformer(nn.Module):
-    """This is the main model class for the TFBindingTransformer"""
-    def __init__(self, seq_feature_dim, domain_seq_dim, struct_dim, alphafold_dim, 
-                 num_domains, embed_dim, hidden_dim, num_heads, 
-                 num_layers, dropout=0.3):
-        super(TFBindingTransformer, self).__init__()
+    def __init__(self, seq_feature_dim, domain_seq_dim, struct_dim, alphafold_dim,
+                 embed_dim, hidden_dim, num_heads, num_layers, dropout=0.3):
 
+        super(TFBindingTransformer, self).__init__()
         # Enhanced feature processors with residual connections
         self.seq_processor = EnhancedFeatureProcessor(seq_feature_dim, embed_dim)
         self.domain_seq_processor = EnhancedFeatureProcessor(domain_seq_dim, embed_dim)
@@ -190,33 +147,27 @@ class TFBindingTransformer(nn.Module):
         )
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
         
-        # Domain Embedding with more dimensions
-        self.domain_embedding = nn.Embedding(num_domains, hidden_dim)
-        self.domain_norm = nn.LayerNorm(hidden_dim)
-        
-        #Domain Bias
-        self.domain_heads = nn.ModuleList([nn.Linear(hidden_dim, 1, bias=False)
-                                   for _ in range(num_domains)])
-
         # Cross-attention mechanisms for feature interaction
         self.seq_alphafold_attention = CrossAttention(embed_dim, hidden_dim, hidden_dim)
         self.seq_struct_attention = CrossAttention(embed_dim, hidden_dim, hidden_dim)
         self.domain_seq_alphafold_attention = CrossAttention(embed_dim, hidden_dim, hidden_dim)
 
         # Layer normalization for feature combination
-        self.combined_norm = nn.LayerNorm(embed_dim * 2 + hidden_dim * 3)
+        self.combined_norm = nn.LayerNorm(embed_dim * 2 + hidden_dim * 2)
         
         # Output layers with increased capacity
-        combined_dim = (embed_dim * 2) + (hidden_dim * 3)
+        combined_dim = (embed_dim * 2) + (hidden_dim * 2)
         self.fc_hidden = nn.Linear(combined_dim, hidden_dim)
         self.output_norm = nn.LayerNorm(hidden_dim)
         self.fc_out = nn.Linear(hidden_dim, 1)
         
         # Dropout for regularization
         self.dropout = nn.Dropout(dropout)
-        self.fusion_gate = nn.Linear(embed_dim * 2 + hidden_dim * 3, embed_dim * 2 + hidden_dim * 3) #takes combined features and outputs scalers for importance
+        combined_dim = 2 * embed_dim + 2 * hidden_dim
+        self.fusion_gate = nn.Linear(combined_dim, combined_dim)
 
-    def forward(self, seq_input, struct_input, alphafold_input, domain_input, domain_seq_input):
+
+    def forward(self, seq_input, struct_input, alphafold_input, domain_seq_input):
         if self.training and torch.rand(1).item() < 0.8:  # Add noise during training with 80% probability
             # Add Gaussian noise to structured inputs
             struct_input = add_noise(struct_input, std=0.2)  # Increase noise standard deviation
@@ -256,9 +207,6 @@ class TFBindingTransformer(nn.Module):
         seq_struct_attn = self.seq_struct_attention(seq_out, struct_out)
         domain_alphafold_attn = self.domain_seq_alphafold_attention(domain_seq_out, alphafold_out)
 
-        # Get domain embeddings
-        domain_out = self.domain_embedding(domain_input)
-        
         
         # Apply cross-attention between sequence and structural features
         seq_alphafold_attn = self.seq_alphafold_attention(seq_out, alphafold_out)
@@ -272,7 +220,6 @@ class TFBindingTransformer(nn.Module):
             seq_out,
             struct_out, 
             alphafold_out, 
-            domain_out, 
             domain_seq_out
         ], dim=1)
         
@@ -281,7 +228,6 @@ class TFBindingTransformer(nn.Module):
         combined = combined * gate  # Gated feature fusion
         combined = self.combined_norm(combined)
         
-
         # Process through final layers with residual connection
         hidden = F.gelu(self.fc_hidden(combined))
         hidden = self.output_norm(hidden)
@@ -291,16 +237,11 @@ class TFBindingTransformer(nn.Module):
         logit_base = self.fc_out(hidden).squeeze(1)  # [batch]
         # Ensure consistent shape for domain head outputs
         bias = torch.zeros_like(logit_base)
-        for i, d in enumerate(domain_input):
-            # Make sure this returns a scalar for each sample
-            domain_output = self.domain_heads[d](hidden[i].unsqueeze(0)).view(-1)
-            bias[i] = domain_output
 
         # Apply sigmoid to the sum
         output = torch.sigmoid(logit_base + bias)
 
         return output
-
 def predict_scores(model, new_data, batch_size=32):
     """
     Predict Kd scores for new data using the trained model.
