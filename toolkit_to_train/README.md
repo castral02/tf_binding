@@ -74,10 +74,13 @@ To see an example of features processed and an example of dataset to train model
 
 The target output is considered to be a Transformed Kd value between 0-1. We performed a min-max normalization on experimental Kd values (2).
 
-Min-max normalization is defined as:
+For the overall model, which includes every domain, the max_kd = 100569.66 nM and the min_kd = 1172.55 nM. 
 
-![Min-max normalization](https://latex.codecogs.com/png.image?\dpi{150}&bg=white&color=black&space;x'%20=%20\frac{x%20-%20\min(x)}{\max(x)%20-%20\min(x)})
-
+For each domain: 
+- KIX: max_kd = 100569.66 nM; min_kd = 1172.55 nM
+- NCBD: max_kd = 88602.08 nM; min_kd = 8707.01 nM
+- TAZ1: max_kd = 53489.15 nM; min_kd = 13385.2 nM
+- TAZ2: max_kd = 46358.97 nM; min_kd = 1836.22 nM
 
 ## Model Architecture Overview
 
