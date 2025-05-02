@@ -47,7 +47,7 @@ run_multimer_jobs.py --mode=pulldown --num_cycle=3 --num_predictions_per_model=1
 run_get_good_pae.sh --output_dir pulldown_model --cutoff=50
 ```
 
-To view example `sbatch` files, [click here]().
+To view example `sbatch` files, [click here](scripts/sh_files).
 
 ## Requirements
 To run the software, the preferred operating systems are macOS and Linux systems. A conda environment is needed to run the software to hold necessary packages. 
