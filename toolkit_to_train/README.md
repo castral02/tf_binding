@@ -9,8 +9,9 @@ To look at how we prepared our features, [click here](preparing_features.py).
 
 Several features were choosen due to their contribution of variance in PCA.
 
-![PCA AlphaFold](../examples/images/pca_alphafold_metrics.png)
-![PCA Interface](../examples/images/pca_interface.png)
+<img src="../examples/images/pca_alphafold_metrics.png" width="300">
+<img src="../examples/images/pca_interface.png" width="300">
+
 
 
 ## Model Architecture Overview
