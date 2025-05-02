@@ -324,7 +324,7 @@ Furthermore a learning rate scheduler was attached to reduce learning rate if To
     #top 25%
 ```
 
-To impove the model's robustness and generalization, we introduced articial noise during training; 
+To impove the model's robustness and generalization, we introduced artificial noise during training:
 
 - Gaussian Noise: Added noise with a standard deviation of 0.2 to interface features and AlphaFold metrics to prevent the model from memorizing data points and focusing on broader patterns within the dataset.
 - Random Masking: a 20% masking probability is applied to domain and transcription factor sequences to force the model to learn with incomplete-information and enhances the ability to generalize.
