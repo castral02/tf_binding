@@ -27,7 +27,7 @@ for folder_name in os.listdir(PARENT_DIR):
 #SBATCH --output=output/{folder_name}_colab.log    # Unique output log for each job
 #SBATCH --error=error/{folder_name}_colab.log      # Unique error log for each job
 #SBATCH --mail-type=END,FAIL   # Send email on job completion (END) or failure (FAIL)
-#SBATCH --mail-user=alex.castroverde@nih.gov  # Replace with your email address
+#SBATCH --mail-user=  # Replace with your email address
 
 set -e
 set -x  # Enable debugging
