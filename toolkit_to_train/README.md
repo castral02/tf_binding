@@ -7,11 +7,68 @@ To look at how we prepared our features, [click here](preparing_features.py).
 
 *Inputted Features*
 
-Several features were choosen due to their contribution of variance in PCA.
+We performed PCA on AlphaFold Metrics and Interface features to asses their contribution to the variance in the dataset. 
+
+For AlphaFold Metrics, the first two principal components (PC1 and PC2) account for ~79.7% of the total variance. PC1 alone explains for 53.0%. As seen below, features such as ipTM, average PAE score, and mpDockQ/pDockQ highlight a strong directional influence on PC1; therefore, adding these features will facilitate with downstream modeling. 
+
+For Interface Features, the first two principal components (PC1 and PC2) account for ~61.7% of the total variance. PC1 explains 42.7% of that total. Using both the PCA and previous research, we used specific biochemical and interface properities to model the binding (2-4).
 
 <img src="../examples/images/pca_alphafold_metrics.png" width="300"> <img src="../examples/images/pca_interface.png" width="300">
 
+**AlphaFold Features:**
+1. [ipTM](https://www.ebi.ac.uk/training/online/courses/alphafold/inputs-and-outputs/evaluating-alphafolds-predicted-structures-using-confidence-scores/confidence-scores-in-alphafold-multimer/)
+2. [Average PAE score](https://www.ebi.ac.uk/training/online/courses/alphafold/inputs-and-outputs/evaluating-alphafolds-predicted-structures-using-confidence-scores/pae-a-measure-of-global-confidence-in-alphafold-predictions/)
+3. [mpDockQ/pDockQ](https://www.nature.com/articles/s41467-022-33729-4) (1)
 
+**Interface Features:**
+1. interface solvation energy
+2. Charge
+3. Hydrophobicity
+4. Number of Contact pairs in the interface
+5. The interface surface area
+
+Furthermore, transcription factor and domain sequence was added as a feature. To add sequence to your csv file from the fasta file, look at this [code](../scripts/preparing_data.py)
+
+Features were normalized to each domain using a ```StandardScaler``` and saved as a ```joblib```. 
+
+```python
+def prepare_features(df, structure_features, af_features, save_scalers=True):
+    """Prepare and scale features for model training, with domain-specific normalization."""
+    seq_features = np.array(df['encoded_sequence'].tolist())
+    struct_features = df[structure_features].values  # Correctly use structure_features
+    alphafold_features = df[af_features].values  # Correctly use af_features
+    domain_sequences = np.array(df['encode_domain'].tolist())
+    
+    # Initialize arrays to store the scaled features
+    struct_scaled = np.zeros_like(struct_features)
+    alphafold_scaled = np.zeros_like(alphafold_features)
+
+    struct_scaler = StandardScaler()
+    alphafold_scaler = StandardScaler()
+
+    struct_scaled = struct_scaler.fit_transform(struct_features)
+    alphafold_scaled = alphafold_scaler.fit_transform(alphafold_features)
+    
+    if save_scalers:
+        domain_scalers = {'structure': struct_scaler, 'alphafold': alphafold_scaler}
+    
+    return seq_features, struct_scaled, alphafold_scaled, df['Transformed Kd (nM)'].values, domain_sequences, domain_scalers
+```
+
+Each amino acid in transcription factor and domain sequence is converted to an index based on a 1-based encoding (0 is reserved for padding). To uniform sequences, each sequence is truncated or padded to uniform length of 50 to help with convergence and learning. 
+
+```python
+aa_to_index = {aa: i + 1 for i, aa in enumerate("ACDEFGHIKLMNPQRSTVWY")}  # 1-based index, 0 for padding
+
+def encode_sequence(sequence, aa_to_index, max_length=50):
+    """Convert sequence to token indices for transformer embedding"""
+    if not isinstance(sequence, str):
+        return [0] * max_length  # Return all padding if sequence is missing
+    sequence = sequence[:max_length]  # Truncate long sequences
+    return [aa_to_index.get(aa, 0) for aa in sequence] + [0] * (max_length - len(sequence))
+```
+
+To see an example of features processed and an example of dataset to train model, [click here](.../trained_model/overall_prediction/information/processed_data.csv)
 
 ## Model Architecture Overview
 
@@ -56,6 +113,7 @@ In this architecture, cross attention is used to model the folling interactions,
 3. Domain sequences and AlphaFold Metrics
 
 **How it works**:
+
 This is a classic mechanism called [query-key-value (QKV)](https://poloclub.github.io/transformer-explainer/).
 
 - Query (Q): the question; what we are focusing on?
@@ -149,3 +207,9 @@ A fusion gate dynamically learn the importance of each modality essentially ampl
 The final layers consist of a fully connected layer followed by a GELU activation and a dropout for regulization. 
 
 A domain-specific bias is then added to capture the differences in binding behavior across the different domains. The output is passed through a sigmoid activation, ensuring the final score to be between 0-1. 
+
+## References
+[1] Bryant, P., Pozzati, G., Zhu, W. et al. Predicting the structure of large protein complexes using AlphaFold and Monte Carlo tree search. Nat Commun, 13, 6028 (2022). [Paper Link](https://www.nature.com/articles/s41467-022-33729-4)
+[2] DelRosso, Nicole, et al. “High-Throughput Affinity Measurements of Direct Interactions between Activation Domains and Co-Activators.” bioRxiv, Jan. 2024, p. 2024.08.19.608698,[Paper Link](https://doi.org/10.1101/2024.08.19.608698).
+[3] Már, Matti, et al. “Multifunctional Intrinsically Disordered Regions in Transcription Factors.” Chemistry – A European Journal, vol. 29, no. 21, Apr. 2023, p. e202203369, [Paper Link](https://doi.org/10.1002/chem.202203369).
+[4] Ravarani, Charles NJ, et al. “High‐throughput Discovery of Functional Disordered Regions: Investigation of Transactivation Domains.” Molecular Systems Biology, vol. 14, no. 5, 2018, p. e8190, [Paper Link](https://doi.org/10.15252/msb.20188190).
