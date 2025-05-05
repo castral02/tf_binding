@@ -117,7 +117,7 @@ rm -rf /data/CBLCCBR/crebbp_ep300/crebbp/KIX/pulldown_cf_msas
 
 *Preparing Features*
 
-Some features from the AlphaPulldown pipeline is not attached to the output csv file ([example of AlphaPulldown Output](../examples)). To prepare this, you will need to run two codes:
+Some features from the AlphaPulldown pipeline is not attached to the output csv file ([example of AlphaPulldown Output](../examples/csv_output_examples/alphapulldown_output.csv)). To prepare this, you will need to run two codes:
 
 1. [Extracting PAE score](../scripts/lia_lis.py)
 
