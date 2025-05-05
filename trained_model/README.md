@@ -127,13 +127,15 @@ python3 lia_lis.py -output_dir=/directory/to/AlphaPulldown/files
 
 2. [Grabbing domain categories and transcription factor and domain sequences](../scripts/preparing_data.py)
 
+To have an example of a csv file output from this code, [click here](../examples/csv_output_examples/LIA_LIS_output.csv)
+
 ```bash
 python3 preparing_data.py -fasta=/path/to/fasta -csv=/path/to/csv/file -protein=EP300orCREBBP
 ```
   a. fasta file: the fasta file of candidate proteins the user used to run AlphaPulldown
   b. csv: csv file after the PAE score has been extracted
 
-To have an example of a csv file to input to predict scores, [click here](../examples)
+To have an example of a csv file to input to predict scores, [click here](../examples/csv_output_examples/csv_input_example.csv)
 
 *Creating a Prediction*
 
@@ -143,4 +145,4 @@ cd trained_model/overall_prediction
 python creating_prediction.py 
 ```
 
-[An example of an output](../examples)
+[An example of an output](../examples/csv_output_examples/example_hat_score_output.csv)
