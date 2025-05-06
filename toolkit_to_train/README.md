@@ -93,6 +93,8 @@ For each domain:
 
 ## Model Architecture Overview
 
+![Model](../examples/images/model.png)
+
 *Enhnaced Feature Processing*
 
 The inputs of AlphaFold Metrics, transcription factor sequence, domain sequence, domain category, interface structure metrics are transformed to a high dimensional representation in ```Enhanced Feature Processing```.
