@@ -78,6 +78,6 @@ This project utilized OpenAI's ChatGPT to assist in generating Python code, docu
 - DelRosso, N. et al. *High-throughput affinity measurements of direct interactions between activation domains and co-activators.*
 **bioRxiv,** 608698, (2024) [Paper Link](https://doi.org/10.1101/2024.08.19.608698)
 
-- Dingquan Yu, Grzegorz Chojnowski, Maria Rosenthal, Jan Kosinski. *AlphaPulldown—a Python package for protein–protein interaction screens using AlphaFold-Multimer*, **Bioinformatics**, 39(1), 2023. [Paper Link](https://doi.org/10.1093/bioinformatics/btac749)
+- Yu, D. et al. *AlphaPulldown—a Python package for protein–protein interaction screens using AlphaFold-Multimer*, **Bioinformatics**, 39(1), (2023) [Paper Link](https://doi.org/10.1093/bioinformatics/btac749)
 
 > This work utilized the computational resources of the [NIH HPC Biowulf cluster](https://hpc.nih.gov).
