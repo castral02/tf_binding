@@ -4,7 +4,7 @@ We created five models, each trained on a different distribution of Transformed 
 In this README, we will be going throuhg an example of our [general-pupose model](overall_prediction) that has been trained across al the domains to predict binding affinity. 
 
 
-<img src="overall_prediction/information/loss_curve.png" width="300"> <img src="overall_prediction/information/accuracy_curve.png" width="300"> <img src="overall_prediction/information/r_square_predicted_actual.png" width="300">
+<img src="overall_prediction/information/loss_curve.png" width="300"> <img src="overall_prediction/information/accuracy_curve.png" width="300"> <img src="overall_prediction/information/r_square_predicted_actual.png" width="300"> <img src="overall_prediction/information/accuracy_scores.png" width="300">
 
 **Performance Metrics**:
 
