@@ -1,5 +1,5 @@
 # Training your own model
-In this repository, we give you the [architecutre of our model](TF_binder_model.py), and an example on how to [train](train_model.py) your own model. 
+In this repository, we give you the [architecture of our model](TF_binder_model.py), and an example on how to [train](train_model.py) your own model. 
 
 ## Preparing Features
 
@@ -7,11 +7,11 @@ To look at how we prepared our features, [click here](preparing_features.py).
 
 *Inputted Features*
 
-We performed PCA on AlphaFold Metrics and Interface features to asses their contribution to the variance in the dataset. 
+We performed PCA on AlphaFold Metrics and Interface features to assess their contribution to the variance in the dataset. 
 
-For AlphaFold Metrics, the first two principal components (PC1 and PC2) account for ~79.7% of the total variance. PC1 alone explains for 53.0%. As seen below, features such as ipTM, average PAE score, and mpDockQ/pDockQ highlight a strong directional influence on PC1; therefore, adding these features will facilitate with downstream modeling. 
+For AlphaFold Metrics, the first two principal components (PC1 and PC2) account for ~79.7% of the total variance. PC1 alone explains for 53.0%. As seen below, features such as ipTM, average PAE score, and mpDockQ/pDockQ highlight a strong directional influence on PC1; therefore, adding these features will facilitate downstream modeling. 
 
-For Interface Features, the first two principal components (PC1 and PC2) account for ~61.7% of the total variance. PC1 explains 42.7% of that total. Using both the PCA and previous research, we used specific biochemical and interface properities to model the binding (2-4).
+For Interface Features, the first two principal components (PC1 and PC2) account for ~61.7% of the total variance. PC1 explains 42.7% of that total. We applied both PCA and previous research to determine which specific biochemical and interface properities to use as  feature in the model (2-4)
 
 <img src="../examples/images/pca_alphafold_metrics.png" width="400"> <img src="../examples/images/pca_interface.png" width="400">
 
@@ -95,7 +95,7 @@ For each domain:
 
 ![Model](../examples/images/model.png)
 
-*Enhnaced Feature Processing*
+*Enhanced Feature Processing*
 
 The inputs of AlphaFold Metrics, transcription factor sequence, domain sequence, domain category, interface structure metrics are transformed to a high dimensional representation in ```Enhanced Feature Processing```.
 
@@ -120,7 +120,7 @@ class EnhancedFeatureProcessor(nn.Module):
         x = self.norm(x)
         x = F.gelu(x) #helps with a smoother and more expressive activation
 
-        for block in self.residual_blocks: #deepends the network 
+        for block in self.residual_blocks: #deepens the network 
             x = block(x)
 
         return x
@@ -128,9 +128,9 @@ class EnhancedFeatureProcessor(nn.Module):
 
 *Cross Attention*
 
-This module creates contextual relationship between different features by apply cross-attention helping the model learn about what parts of the input are most relevant to another. 
+This module creates contextual relationships between different features by applying cross-attention helping the model learn about what parts of the input are most relevant to another. 
 
-In this architecture, cross attention is used to model the folling interactions, 
+In this architecture, cross attention is used to model the following interactions, 
 1. Transcription factor sequences and interface structural features
 2. Transcription factor sequence and AlphaFold Metrics
 3. Domain sequences and AlphaFold Metrics
@@ -139,8 +139,8 @@ In this architecture, cross attention is used to model the folling interactions,
 
 This is a classic mechanism called [query-key-value (QKV)](https://poloclub.github.io/transformer-explainer/).
 
-- Query (Q): the question; what we are focusing on?
-- Key (K): the reference; what portions of the data is relevant?
+- Query (Q): the question; what are we focusing on?
+- Key (K): the reference; what portions of the data are relevant?
 - Value (v): the content; what information should be retrieved and passed forward?
 
 ```python
@@ -204,9 +204,9 @@ Transformer Encoder with more capacity and layers
 
 *Feature Fusion*
 
-Before the final layers, all the processed features are fused toether into a single representation. This fusion enables the model to integrate multiple modalities-- such as sequence, structure, and AlphaFold-metrics-- into a unified view for downstream prediction. 
+Before the final layers, all the processed features are fused together into a single representation. This fusion enables the model to integrate multiple modalities-- such as sequence, structure, and AlphaFold-metrics-- into a unified view for downstream prediction. 
 
-A fusion gate dynamically learn the importance of each modality essentially amplifying informative signal while supressing irrelevant noise. 
+A fusion gate dynamically learns the importance of each modality essentially amplifying informative signal while suppressing irrelevant noise. 
 
 ```python
 #in the def __init__...
@@ -227,18 +227,18 @@ A fusion gate dynamically learn the importance of each modality essentially ampl
 
 *Output Layer*
 
-The final layers consist of a fully connected layer followed by a GELU activation and a dropout for regulization. 
+The final layers consist of a fully connected layer followed by a GELU activation and a dropout for regularization. 
 
 A domain-specific bias is then added to capture the differences in binding behavior across the different domains. The output is passed through a sigmoid activation, ensuring the final score to be between 0-1. 
 
 ## Training Model
 
-The training code is highlighted [here](train_model.py). When training our model, we wanted to make sure can identify the key transcription factors that bind strongly to the any EP300 domain (Top 25%) while mainitng overall predictive accuracy. 
+The training code is highlighted [here](train_model.py). When training our model, we wanted to ensure the model could identify the key transcription factors that bind strongly to any EP300 domain (Top 25%) while maintaining overall predictive accuracy. 
 
 
 **Custom Loss Function**
 
-We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. Within the target y-values, the code divides them into empirical percentiles and identify the top-25% slice. The Top-25% slice is weighed out more heavily by a factor of alpha while a smaller weight of gamma is applied to remaining predictions outside the percintile. These weights are applied to a MSE loss, which is averaged over the entire dataset. The loss function combines the Top-25% loss and overall loss using a balance factor. 
+We created a custom loss function to prioritize performance in both Top 25% binders and overall accuracy. Within the target y-values, the code divides them into empirical percentiles and identifies the top-25% slice. The Top-25% slice is weighed more heavily by a factor of alpha while a smaller weight of gamma is applied to remaining predictions outside the percentile. These weights are applied to a MSE loss, which is averaged over the entire dataset. The loss function combines the Top-25% loss and overall loss using a balance factor. 
 
 ```python
 class BalancedTopWeightedMSE(torch.nn.Module):
@@ -326,7 +326,7 @@ Furthermore a learning rate scheduler was attached to reduce learning rate if To
     #top 25%
 ```
 
-To impove the model's robustness and generalization, we introduced artificial noise during training:
+To improve the model's robustness and generalization, we introduced artificial noise during training:
 
 - Gaussian Noise: Added noise with a standard deviation of 0.2 to interface features and AlphaFold metrics to prevent the model from memorizing data points and focusing on broader patterns within the dataset.
 - Random Masking: a 20% masking probability is applied to domain and transcription factor sequences to force the model to learn with incomplete-information and enhances the ability to generalize.
