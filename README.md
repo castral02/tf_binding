@@ -3,11 +3,11 @@ A deep learning model for predicting EP300-Transcription Factor interactions usi
 
 ## Abstract
 
-EP300 is a histone acetyltransferase (HAT) enzyme that serves as a critical transcriptional co-activator for a variety of lineage-specific transcription factors (TFs). Many TFs interact with and recruit this HAT through dedicated protein-protein interactions, enabling it to acetylate histones and increase chromatin accessibility at specific genomic loci. While small molecule inhibition of EP300 has been shown to alter many specific TF-dependent gene expression programs, it remains difficult to predict what TFs are directly EP300-dependent and which may therefore be targeted therapeutically using this approach.
+EP300 is a histone acetyltransferase (HAT) enzyme that serves as a critical transcriptional co-activator for a variety of lineage-specific transcription factors (TFs). Many TFs interact with and recruit this HAT through dedicated protein-protein interactions, enabling it to acetylate histones and increase chromatin accessibility at specific genomic loci. While small molecule inhibition of EP300 has been shown to alter many specific TF-dependent gene expression programs, it remains difficult to predict what TFs are directly EP300-dependent and which may therefore be targeted therapeutically.
 
-To address this challenge, we developed a deep learning model capable of prioritizing EP300-TF interactions for experimental testing called TF Binding. We further created individual models for each domain exploring their non-linear relationships with transcription activation and AF metrics. 
+To address this challenge, we developed TF Binding-- a deep learning model capable of prioritizing EP300-TF interactions for experimental testing. We further created individual models for each domain exploring their non-linear relationships with transcription activation and AF metrics. 
 
-Our approach integrates recently developed high-throughput EP300-TF binding [data](https://www.biorxiv.org/content/10.1101/2024.08.19.608698v1) in combination with AlphaFold2-based structure prediction to develop a novel scoring system called HAT_score that significantly enhances the prediction of EP300-TF relative to traditional structure prediction metrics. We anticipate this model will be useful to prioritize the discovery of uncharacterized regulatory interactions, providing a link between high-throughput transcriptional activation assays and EP300 that will be potentially extensible to additional druggable transcriptional co-activator families.
+Our approach integrates recently developed high-throughput EP300-TF binding [data](https://www.biorxiv.org/content/10.1101/2024.08.19.608698v1) in combination with AlphaFold2-based structure prediction to develop a novel scoring system called HAT_score that significantly enhances the prediction of EP300-TF binding relative to traditional structure prediction metrics. We anticipate this model will be useful to prioritize the discovery of uncharacterized regulatory interactions, providing a link between high-throughput transcriptional activation assays and EP300 that will be potentially extensible to additional druggable transcriptional co-activator families.
 
 ---
 ## The model
@@ -18,7 +18,7 @@ The primary goal of this repository is to give the tools and understanding for u
 In this repository, there are...
 1. [Trained Model](trained_model)
 2. [Tools to Train a New Model](toolkit_to_train)
-3. [How to create a predicitions](trained_model)
+3. [How to create a predicition](trained_model)
 4. [Examples/Data](examples)
 
 
