@@ -1,7 +1,9 @@
 ## Our trained models
 
-We created five models, each trained on a different distribution of Transformed Kd Values depending on the domain or the overall datase. To learn how we trained and more about the architecture of the model, [click here](../toolkit_to_train).
-In this README, we will be going throuhg an example of our [general-pupose model](overall_prediction) that has been trained across al the domains to predict binding affinity. 
+We created five models, each trained on a different distribution of Transformed Kd Values depending on the domain or the overall database. To learn how we trained and more about the architecture of the model, [click here](../toolkit_to_train).
+
+
+In this README, we will be going through an example of our [general-purpose model](overall_prediction) that has been trained across all the domains to predict binding affinity. 
 
 
 <img src="overall_prediction/information/loss_curve.png" width="500"> <img src="overall_prediction/information/accuracy_curve.png" width="500">
